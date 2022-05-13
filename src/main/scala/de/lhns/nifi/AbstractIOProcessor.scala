@@ -1,9 +1,8 @@
 package de.lhns.nifi
 
+import cats.effect.IO
 import cats.effect.std.Semaphore
 import cats.effect.unsafe.IORuntime
-import cats.effect.{IO, IOLocal}
-import de.lhns.nifi.AbstractIOProcessor.Context
 import fs2.Stream
 import org.apache.nifi.components.PropertyDescriptor
 import org.apache.nifi.flowfile.FlowFile
@@ -16,37 +15,21 @@ import scala.jdk.CollectionConverters._
 abstract class AbstractIOProcessor extends AbstractSessionFactoryProcessor {
   protected val chunkSize = 10240
 
-  private val localContext: IOLocal[Context] = IOLocal[Context](null).unsafeRunSync()(IORuntime.global)
-
-  final def contextIO: IO[ProcessContext] = localContext.get.map(_.context)
-
-  final def sessionIO: IO[ProcessSession] = localContext.get.map(_.session)
-
-  final def exportTo(flowFile: FlowFile): Stream[IO, Byte] =
-    Stream.eval(localContext.get).flatMap { c =>
-      fs2.io.readOutputStream(chunkSize) { outputStream =>
-        c.exportSemaphore.permit.use { _ =>
-          IO.blocking {
-            c.session.exportTo(flowFile, outputStream)
-          }
-        }
-      }
-    }
-
-  final def importFrom(stream: Stream[IO, Byte], flowFile: FlowFile): IO[FlowFile] =
-    localContext.get.flatMap { c =>
-      fs2.io.toInputStreamResource(stream).use { inputStream =>
+  final def exportTo(flowFile: FlowFile)(implicit context: Context): Stream[IO, Byte] =
+    fs2.io.readOutputStream(chunkSize) { outputStream =>
+      context.exportSemaphore.permit.use { _ =>
         IO.blocking {
-          c.session.importFrom(inputStream, flowFile)
+          context.session.exportTo(flowFile, outputStream)
         }
       }
     }
 
-  def supportedPropertyDescriptors: Seq[PropertyDescriptor]
-
-  def relationships: Set[Relationship]
-
-  def onTrigger: IO[Unit]
+  final def importFrom(stream: Stream[IO, Byte], flowFile: FlowFile)(implicit context: Context): IO[FlowFile] =
+    fs2.io.toInputStreamResource(stream).use { inputStream =>
+      IO.blocking {
+        context.session.importFrom(inputStream, flowFile)
+      }
+    }
 
   override final lazy val getSupportedPropertyDescriptors: util.List[PropertyDescriptor] =
     util.Arrays.asList(supportedPropertyDescriptors: _*)
@@ -58,12 +41,11 @@ abstract class AbstractIOProcessor extends AbstractSessionFactoryProcessor {
     try {
       (for {
         exportSemaphore <- Semaphore[IO](1)
-        _ <- localContext.set(Context(
+        _ <- onTrigger(new Context(
           context = context,
           session = session,
           exportSemaphore = exportSemaphore,
         ))
-        _ <- onTrigger
         _ <- IO.async_[Unit] { complete =>
           session.commitAsync(
             () => complete(Right(())),
@@ -80,12 +62,10 @@ abstract class AbstractIOProcessor extends AbstractSessionFactoryProcessor {
         throw t
     }
   }
-}
 
-object AbstractIOProcessor {
-  private case class Context(
-                              context: ProcessContext,
-                              session: ProcessSession,
-                              exportSemaphore: Semaphore[IO],
-                            )
+  def supportedPropertyDescriptors: Seq[PropertyDescriptor]
+
+  def relationships: Set[Relationship]
+
+  def onTrigger(implicit context: Context): IO[Unit]
 }

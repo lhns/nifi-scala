@@ -1,7 +1,6 @@
 package de.lhns.nifi
 
-import cats.effect.unsafe.IORuntime
-import cats.effect.{IO, IOLocal}
+import cats.effect.IO
 import de.lhns.nifi.AbstractStreamProcessor.PROP_BATCH_SIZE
 import fs2.{Pipe, Stream}
 import org.apache.nifi.components.PropertyDescriptor
@@ -14,23 +13,15 @@ abstract class AbstractStreamProcessor extends AbstractIOProcessor {
   override def supportedPropertyDescriptors: Seq[PropertyDescriptor] =
     Seq(PROP_BATCH_SIZE)
 
-  private val localBatchSize: IOLocal[Option[Int]] = IOLocal[Option[Int]](None).unsafeRunSync()(IORuntime.global)
+  override final def onTrigger(implicit context: Context): IO[Unit] = {
+    val batchSize = context.context.getProperty(PROP_BATCH_SIZE).evaluateAttributeExpressions.asInteger
+    Stream.iterable(context.session.get(batchSize).asScala)
+      .through(stream)
+      .compile
+      .drain
+  }
 
-  final def batchSizeIO: IO[Int] = localBatchSize.get.map(_.getOrElse(throw new IllegalStateException()))
-
-  override final def onTrigger: IO[Unit] =
-    for {
-      context <- contextIO
-      session <- sessionIO
-      batchSize = context.getProperty(PROP_BATCH_SIZE).evaluateAttributeExpressions.asInteger
-      _ <- localBatchSize.set(Some(batchSize))
-      _ <- Stream.iterable(session.get(batchSize).asScala)
-        .through(stream)
-        .compile
-        .drain
-    } yield ()
-
-  def stream: Pipe[IO, FlowFile, Unit]
+  def stream(implicit context: Context): Pipe[IO, FlowFile, Unit]
 }
 
 object AbstractStreamProcessor {
