@@ -39,6 +39,8 @@ lazy val commonSettings: Seq[Setting[_]] = Seq(
 
   Compile / doc / sources := Seq.empty,
 
+  sonatypeProfileName := "de.lolhens",
+
   publishMavenStyle := true,
 
   publishTo := sonatypePublishToBundle.value,
