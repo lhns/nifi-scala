@@ -4,7 +4,7 @@ ThisBuild / scalaVersion := scalaVersions.head
 ThisBuild / versionScheme := Some("early-semver")
 
 lazy val commonSettings: Seq[Setting[_]] = Seq(
-  organization := "de.lhns",
+  organization := "de.lolhens",
   version := {
     val Tag = "refs/tags/(.*)".r
     sys.env.get("CI_VERSION").collect { case Tag(tag) => tag }
@@ -38,8 +38,6 @@ lazy val commonSettings: Seq[Setting[_]] = Seq(
   },
 
   Compile / doc / sources := Seq.empty,
-
-  sonatypeProfileName := "de.lolhens",
 
   publishMavenStyle := true,
 
