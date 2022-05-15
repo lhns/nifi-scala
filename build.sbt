@@ -54,6 +54,8 @@ lazy val commonSettings: Seq[Setting[_]] = Seq(
   )).toList
 )
 
+name := (core.projectRefs.head / name).value
+
 val V = new {
   val catsEffect = "3.3.11"
   val fs2 = "3.2.7"
@@ -61,8 +63,17 @@ val V = new {
   val nifi = "1.16.1"
 }
 
-lazy val root = project
-  .in(file("."))
+lazy val root: Project =
+  project
+    .in(file("."))
+    .settings(commonSettings)
+    .settings(
+      publishArtifact := false,
+      publish / skip := true
+    )
+    .aggregate(core.projectRefs: _*)
+
+lazy val core = projectMatrix.in(file("core"))
   .settings(commonSettings)
   .settings(
     name := "nifi-scala",
@@ -72,5 +83,6 @@ lazy val root = project
       "org.apache.nifi" % "nifi-utils" % V.nifi,
       "org.typelevel" %% "cats-effect" % V.catsEffect,
       "co.fs2" %% "fs2-io" % V.fs2,
-    )
+    ),
   )
+  .jvmPlatform(scalaVersions)
