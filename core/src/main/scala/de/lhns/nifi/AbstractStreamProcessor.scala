@@ -13,15 +13,15 @@ abstract class AbstractStreamProcessor extends AbstractIOProcessor {
   override def supportedPropertyDescriptors: Seq[PropertyDescriptor] =
     Seq(PROP_BATCH_SIZE)
 
-  override final def onTrigger(implicit context: Context): IO[Unit] = {
-    val batchSize = context.context.getProperty(PROP_BATCH_SIZE).evaluateAttributeExpressions.asInteger
-    Stream.iterable(context.session.get(batchSize).asScala)
+  override final def onTrigger(implicit c: Context): IO[Unit] = {
+    val batchSize = c.context.getProperty(PROP_BATCH_SIZE).evaluateAttributeExpressions.asInteger
+    Stream.iterable(c.session.get(batchSize).asScala)
       .through(stream)
       .compile
       .drain
   }
 
-  def stream(implicit context: Context): Pipe[IO, FlowFile, Unit]
+  def stream(implicit c: Context): Pipe[IO, FlowFile, Unit]
 }
 
 object AbstractStreamProcessor {
