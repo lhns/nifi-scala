@@ -11,7 +11,7 @@ class Context(
                val session: ProcessSession,
                private[nifi] val exportSemaphore: Semaphore[IO],
              ) {
-  final def exportTo(flowFile: FlowFile, chunkSize: Int = 10240): Stream[IO, Byte] =
+  final def exportTo(flowFile: FlowFile, chunkSize: Int = 1024 * 64): Stream[IO, Byte] =
     fs2.io.readOutputStream(chunkSize) { outputStream =>
       exportSemaphore.permit.use { _ =>
         IO.blocking {
