@@ -25,7 +25,7 @@ lazy val commonSettings: Seq[Setting[_]] = Seq(
   ),
 
   libraryDependencies ++= Seq(
-    "ch.qos.logback" % "logback-classic" % "1.4.4" % Test,
+    "ch.qos.logback" % "logback-classic" % "1.4.5" % Test,
     "de.lolhens" %% "munit-tagless-final" % "0.2.0" % Test,
     "org.scalameta" %% "munit" % "0.7.29" % Test,
   ),
@@ -58,7 +58,7 @@ name := (core.projectRefs.head / name).value
 
 val V = new {
   val catsEffect = "3.4.0"
-  val fs2 = "3.3.0"
+  val fs2 = "3.4.0"
   val http4s = "0.23.11"
   val nifi = "1.18.0"
 }
