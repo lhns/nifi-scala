@@ -60,7 +60,7 @@ val V = new {
   val catsEffect = "3.4.1"
   val fs2 = "3.4.0"
   val http4s = "0.23.11"
-  val nifi = "1.18.0"
+  val nifi = "1.19.0"
 }
 
 lazy val root: Project =
