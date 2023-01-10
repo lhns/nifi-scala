@@ -12,7 +12,7 @@ Build async NiFi Processors with cats-effect and fs2.
 ### build.sbt
 
 ```sbt
-libraryDependencies += "de.lolhens" %% "nifi-scala" % "0.2.0"
+libraryDependencies += "de.lolhens" %% "nifi-scala" % "0.3.1"
 ```
 
 ## License
