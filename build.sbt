@@ -57,7 +57,7 @@ lazy val commonSettings: Seq[Setting[_]] = Seq(
 name := (core.projectRefs.head / name).value
 
 val V = new {
-  val catsEffect = "3.4.5"
+  val catsEffect = "3.4.4"
   val fs2 = "3.4.0"
   val http4s = "0.23.11"
   val nifi = "1.19.1"
