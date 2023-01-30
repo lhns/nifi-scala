@@ -11,7 +11,7 @@ val V = new {
   val fs2 = "3.5.0"
   val logbackClassic = "1.4.5"
   val munit = "0.7.29"
-  val munitTaglessFinal = "0.2.0"
+  val munitTaglessFinal = "0.2.1"
   val nifi = "1.19.1"
 }
 
@@ -37,7 +37,7 @@ lazy val commonSettings: Seq[Setting[_]] = Seq(
 
   libraryDependencies ++= Seq(
     "ch.qos.logback" % "logback-classic" % V.logbackClassic % Test,
-    "de.lolhens" %% "munit-tagless-final" % V.munitTaglessFinal % Test,
+    "de.lhns" %% "munit-tagless-final" % V.munitTaglessFinal % Test,
     "org.scalameta" %% "munit" % V.munit % Test,
   ),
 
