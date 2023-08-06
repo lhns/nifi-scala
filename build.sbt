@@ -7,12 +7,12 @@ name := (core.projectRefs.head / name).value
 
 val V = new {
   val betterMonadicFor = "0.3.1"
-  val catsEffect = "3.5.0"
+  val catsEffect = "3.5.1"
   val fs2 = "3.7.0"
-  val logbackClassic = "1.4.7"
+  val logbackClassic = "1.4.9"
   val munit = "0.7.29"
   val munitTaglessFinal = "0.2.1"
-  val nifi = "1.21.0"
+  val nifi = "1.23.0"
 }
 
 lazy val commonSettings: Seq[Setting[_]] = Seq(
