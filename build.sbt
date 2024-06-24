@@ -11,7 +11,7 @@ val V = new {
   val fs2 = "3.10.2"
   val logbackClassic = "1.4.13"
   val munit = "1.0.0"
-  val munitTaglessFinal = "0.2.1"
+  val munitTaglessFinal = "0.3.0"
   val nifi = "1.26.0"
 }
 
