@@ -1,4 +1,4 @@
-lazy val scalaVersions = Seq("3.3.7", "2.13.14")
+lazy val scalaVersions = Seq("3.3.7", "2.13.18")
 
 ThisBuild / scalaVersion := scalaVersions.head
 ThisBuild / versionScheme := Some("early-semver")
@@ -7,12 +7,12 @@ name := (core.projectRefs.head / name).value
 
 val V = new {
   val betterMonadicFor = "0.3.1"
-  val catsEffect = "3.5.7"
-  val fs2 = "3.10.2"
-  val logbackClassic = "1.4.13"
-  val munit = "1.0.4"
-  val munitTaglessFinal = "0.2.1"
-  val nifi = "1.28.1"
+  val catsEffect = "3.6.3"
+  val fs2 = "3.12.2"
+  val logbackClassic = "1.5.24"
+  val munitCatsEffect = "2.1.0"
+  val nifi = "2.5.0"
+  val nifiUtils = "2.7.2"
 }
 
 lazy val commonSettings: Seq[Setting[_]] = Seq(
@@ -37,8 +37,7 @@ lazy val commonSettings: Seq[Setting[_]] = Seq(
 
   libraryDependencies ++= Seq(
     "ch.qos.logback" % "logback-classic" % V.logbackClassic % Test,
-    "de.lhns" %% "munit-tagless-final" % V.munitTaglessFinal % Test,
-    "org.scalameta" %% "munit" % V.munit % Test,
+    "org.typelevel" %% "munit-cats-effect" % V.munitCatsEffect % Test,
   ),
 
   testFrameworks += new TestFramework("munit.Framework"),
@@ -84,7 +83,7 @@ lazy val core = projectMatrix.in(file("core"))
 
     libraryDependencies ++= Seq(
       "org.apache.nifi" % "nifi-api" % V.nifi,
-      "org.apache.nifi" % "nifi-utils" % V.nifi,
+      "org.apache.nifi" % "nifi-utils" % V.nifiUtils,
       "org.typelevel" %% "cats-effect" % V.catsEffect,
       "co.fs2" %% "fs2-io" % V.fs2,
     ),
