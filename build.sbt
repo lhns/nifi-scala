@@ -54,12 +54,7 @@ lazy val commonSettings: Seq[Setting[_]] = Seq(
 
   publishTo := sonatypePublishToBundle.value,
 
-  sonatypeCredentialHost := {
-    if (sonatypeProfileName.value == "de.lolhens")
-      "oss.sonatype.org"
-    else
-      "s01.oss.sonatype.org"
-  },
+  sonatypeCredentialHost := Sonatype.sonatypeCentralHost,
 
   credentials ++= (for {
     username <- sys.env.get("SONATYPE_USERNAME")
@@ -69,18 +64,7 @@ lazy val commonSettings: Seq[Setting[_]] = Seq(
     sonatypeCredentialHost.value,
     username,
     password
-  )).toList,
-
-  pomExtra := {
-    if (sonatypeProfileName.value == "de.lolhens")
-      <distributionManagement>
-        <relocation>
-          <groupId>de.lhns</groupId>
-        </relocation>
-      </distributionManagement>
-    else
-      pomExtra.value
-  }
+  )).toList
 )
 
 lazy val root: Project =
