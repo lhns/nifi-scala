@@ -10,7 +10,7 @@ val V = new {
   val catsEffect = "3.6.3"
   val fs2 = "3.12.2"
   val logbackClassic = "1.5.24"
-  val munitCatsEffect = "2.1.0"
+  val munitCatsEffect = "2.2.0"
   val nifi = "2.5.0"
   val nifiUtils = "2.7.2"
 }
