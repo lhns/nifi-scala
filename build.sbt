@@ -12,7 +12,7 @@ val V = new {
   val logbackClassic = "1.5.24"
   val munitCatsEffect = "2.1.0"
   val nifi = "2.5.0"
-  val nifiUtils = "2.7.2"
+  val nifiUtils = "2.10.0"
 }
 
 lazy val commonSettings: Seq[Setting[_]] = Seq(
